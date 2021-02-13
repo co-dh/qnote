@@ -1,4 +1,4 @@
-
+/
 # Poor man's notebook for Q programming language
 
 A deadly simply notebook for Q. Given it a normal q script with Markdown in comments, it will run the code, print the
@@ -26,17 +26,16 @@ Markdown in comments, and output a Markdown for you.
 </dl>
 
 ## Example
+\
 
-~~~q 
-Show:{} / show function is empty in normal code
-~~~
-Show: show / but redefined in Note Mode.
+/~~~q 
+    Show:{} / show function is empty in normal code
+/~~~
+// Show: show / but redefined in Note Mode.
 
-~~~q
+/~~~q
 Show a:til 10
-0 1 2 3 4 5 6 7 8 9
-~~~
-
-
+/~~~
+  
 
 

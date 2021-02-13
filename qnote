@@ -4,15 +4,15 @@ expect "q)"
 
 set fp [open [lindex $argv 0] r]
 
-# block comments converted to fenced code block, and executed.
 # double comments + space are executed.
 # single slash was removed in output. So you can put any markdown.
 # beginning space removed because k interpretered it as comments.
 
+set state code
 foreach line [split [read $fp] "\n"] { 
     switch -regexp $line { 
-        {^/[ ]*$}    - 
-        {^\\[ ]*$}   { puts ``` }  
+        {^/[ ]*$}  { set state comment}
+        {^\\[ ]*$} { set state code}
 
         {^// .*$} { 
             send -- "[string range $line 3 end]\r"
@@ -22,8 +22,10 @@ foreach line [split [read $fp] "\n"] {
         {^/.*}   { puts [string range $line 1 end] } 
 
         default {
-            send -- "[string trim $line]\r"
-            expect "\nq)"
+            if {$state eq "code" } {
+                send -- "[string trim $line]\r"
+                expect "\nq)"
+            } else { puts $line }
         } 
     }
 } 
