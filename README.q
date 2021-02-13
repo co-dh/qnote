@@ -11,7 +11,7 @@ Markdown in comments, and output a Markdown for you.
 <dt>Normal Mode</dt>
     <dd> The script can be load by Q interpreter like normal script.</dd>
 <dt>Note Mode</dt>
-    <dd> Line comments will be outputted with leading slash remove. Block comment will be printed to stdout</dd>
+    <dd> Line comments will be print to stdout with leading slash removed. Block comment will be printed to stdout</dd>
 </dl>
 
 ## Comments Are Handled in Note Mode As Below:
