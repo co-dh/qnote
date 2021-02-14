@@ -1,27 +1,24 @@
 #!/usr/bin/expect -f
+
+# Markdown are placed inside Q's block comment.
+# q code blocks inside Markdown will be executed.
+# When exits from block comment, output ~~~q, and output ~~~ before enter block comment or exit file.
+
 spawn q 
 expect "q)"
 
 set fp [open [lindex $argv 0] r]
-
-# double comments + space are executed.
-# single slash was removed in output. So you can put any markdown.
-# beginning space removed because k interpretered it as comments.
-
+# TODO: multiple line function
+puts "~~~q"
 set state code
+
 foreach line [split [read $fp] "\n"] { 
-    switch -regexp $line { 
-        {^/[ ]*$}  { set state comment}
-        {^\\[ ]*$} { set state code}
-
-        {^// .*$} { 
-            send -- "[string range $line 3 end]\r"
-            expect "\nq)"
-         }
-
-        {^/.*}   { puts [string range $line 1 end] } 
-
-        default {
+    switch -regexp $line {
+        {^~~~[ ]*$}  -
+        {^/[ ]*$}    { puts "~~~" ; set state comment }
+        {^~~~q[ ]*$} -
+        {^\\[ ]*$}   { puts "~~~q"; set state code    }
+        default      {
             if {$state eq "code" } {
                 send -- "[string trim $line]\r"
                 expect "\nq)"
