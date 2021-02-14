@@ -4,10 +4,12 @@
 # q code blocks inside Markdown will be executed.
 # When exits from block comment, output ~~~q, and output ~~~ before enter block comment or exit file.
 
+# a multiple line function start with an id : { [...] /comments
 spawn q 
 expect "q)"
 
-set fp [open [lindex $argv 0] r]
+set tmpf [open "/tmp/qnote.q" w]
+set fp   [open [lindex $argv 0] r]
 # TODO: multiple line function
 puts "~~~q"
 set state code
@@ -18,12 +20,29 @@ foreach line [split [read $fp] "\n"] {
         {^/[ ]*$}    { puts "~~~" ; set state comment }
         {^~~~q[ ]*$} -
         {^\\[ ]*$}   { puts "~~~q"; set state code    }
+        {^\w+:\{$}   -
+        {^\w+:\{.*]$} {
+                        set tmpf [open "/tmp/qnote.q" w]
+                        puts $tmpf $line; puts $line; flush $tmpf;
+                        set state func }
+        {^\    \}}   { if { $state eq "func" }  {
+                           puts $tmpf $line
+                           puts $line
+                           flush $tmpf
+                           send -- "\\l /tmp/qnote.q\r"
+                           expect "\nq)"
+                           set state code }}
         default      {
             if {$state eq "code" } {
                 send -- "[string trim $line]\r"
                 expect "\nq)"
-            } else { puts $line }
-        } 
+            } elseif {$state eq "func"} {
+                puts $tmpf $line
+                puts $line
+            } else {
+                puts $line
+            }
+        }
     }
 } 
 
