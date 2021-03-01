@@ -1,50 +1,64 @@
 #!/usr/bin/expect -f
 
-# Markdown are placed inside Q's block comment.
+# Handling multiple line function in expect over complicated qnote,
+# and also the fact that embaedding markdown in q code, embedding q code in markdown code blcok
+# complicate things unnecessarily. So I decide that we can just put
+# Markdown at the end of q code by \
 # q code blocks inside Markdown will be executed.
-# When exits from block comment, output ~~~q, and output ~~~ before enter block comment or exit file.
+# q code inside ~~~ will be executed, and put INSIDE markdown code block with output,
+# while q coed inside ``` will be executed, and put OUTSIDE of markdown code block with output.
 
-# a multiple line function start with an id : { [...] /comments
 spawn q 
 expect "q)"
+set fname [lindex $argv 0]
+send -- "\\l $fname\r"
+expect "\nq)"
 
-set tmpf [open "/tmp/qnote.q" w]
-set fp   [open [lindex $argv 0] r]
-# TODO: multiple line function
+set fp   [open $fname r]
+# initial state
+set state init
+
 puts "~~~q"
-set state code
-
-foreach line [split [read $fp] "\n"] { 
-    switch -regexp $line {
-        {^~~~[ ]*$}  -
-        {^/[ ]*$}    { puts "~~~" ; set state comment }
-        {^~~~q[ ]*$} -
-        {^\\[ ]*$}   { puts "~~~q"; set state code    }
-        {^\w+:\{$}   -
-        {^\w+:\{.*]$} {
-                        set tmpf [open "/tmp/qnote.q" w]
-                        puts $tmpf $line; puts $line; flush $tmpf;
-                        set state func }
-        {^\    \}}   { if { $state eq "func" }  {
-                           puts $tmpf $line
-                           puts $line
-                           flush $tmpf
-                           send -- "\\l /tmp/qnote.q\r"
-                           expect "\nq)"
-                           set state code }}
-        default      {
-            if {$state eq "code" } {
-                send -- "[string trim $line]\r"
-                expect "\nq)"
-            } elseif {$state eq "func"} {
-                puts $tmpf $line
-                puts $line
-            } else {
-                puts $line
+foreach line [split [read $fp] "\n"] {
+    switch $state {
+        {init} {
+            puts $line
+            switch -regexp $line {
+                {^/[ ]*$}    { set state comment }
+                {^\\[ ]*$}   { puts "~~~"; set state markdown }
             }
         }
+        {comment} {
+            puts $line
+            switch -regexp $line {
+                {^\[ ]*$}    { set state init}
+            }
+        }
+        {markdown} {
+            switch -regexp $line {
+                {^~~~q[ ]*$}    { puts $line; set state markdownCode; continue }
+                {^```q[ ]*$}    {            set state markdownCode2; continue }
+            }
+        puts $line;
+        }
+
+        {markdownCode} {
+            switch -regexp $line {
+                {^~~~[ ]*$}    { puts $line; set state markdown; continue }
+            }
+            send -- "[string trim $line]\r"
+            expect "\nq)"
+        }
+
+        {markdownCode2} {
+            switch -regexp $line {
+                {^```[ ]*$}    {  set state markdown; continue }
+            }
+            send -- "[string trim $line]\r"
+            expect "\nq)"
+        }
     }
-} 
+}
 
 close $fp
 exit
