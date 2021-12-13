@@ -1,8 +1,8 @@
 #!/usr/bin/expect -f
 
-# Handling multiple line function in expect over complicated qnote,
-# and also the fact that embaedding markdown in q code, embedding q code in markdown code blcok
-# complicate things unnecessarily. So I decide that we can just put
+# Handling multiple line function in Expect over-complicates qnote,
+# and also the fact that embaedding markdown in q code, embedding q code in markdown code block
+# complicates things unnecessarily. So I decide that we can just put
 # Markdown at the end of q code by \
 # q code blocks inside Markdown will be executed.
 # q code inside ~~~ will be executed, and put INSIDE markdown code block with output,
