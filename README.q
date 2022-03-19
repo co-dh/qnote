@@ -48,6 +48,8 @@ The following code can be used to generate a markdown table
    -1@header[t] ,separator[t], body t;
 ```
 </pre>
+Will generate
+
 ```q
    -1@header[t] ,separator[t], body t;
 ```

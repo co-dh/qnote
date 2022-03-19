@@ -29,8 +29,8 @@ while[row<count mdLines
        ; (s like "~~~" )  and state<>`PRE ; [state:`NORMAL; -1@line]
        ; (s like "```q") and state<>`PRE ; state:`MDCODE
        ; (s like "```" )  and state<>`PRE ; state:`NORMAL
-       ; s like "<pre>" ; state:`PRE
-       ; s like "</pre>"; state:`NORMAL
+       ; s like "<pre>" ; [state:`PRE; -1@line]
+       ; s like "</pre>"; [state:`NORMAL; -1@line]
        ; state in `PRE`NORMAL; -1@line
        ; state = `CODE  ; [-1@line; 0 s]
        ; state = `MDCODE; [         0 s]

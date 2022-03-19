@@ -17,9 +17,11 @@ comment, it will generated a Markdown file from it:
 can generate markdown from Q.
 
 ## Basic Example:
+<pre>
     ~~~q
         show f 1
     ~~~
+</pre>
 Will generate
 ~~~q
     show f 1
@@ -52,9 +54,13 @@ a b
 ## Example: Generate markdown table from q
 
 The following code can be used to generate a markdown table
+<pre>
 ```q
    -1@header[t] ,separator[t], body t;
 ```
+</pre>
+Will generate
+
 |a|b|
 |-|-|
 |1|c|
