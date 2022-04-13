@@ -16,20 +16,19 @@ Markdown from there. If a q code block found, it will be executued
 
 fn: .z.x 0
 system "l ",fn
-/w: where the first ^\$ starts 
-mdLines: _[;allLines] w: 1+first where enlist["\\"] ~/: allLines: read0 `$fn
--1@"~~~q";
--1@/:(w-1)#allLines;
--1@"~~~";
+allLines: read0 `$fn
+slashIdx: where enlist["\\"] ~/: allLines
+markDownStarts: first 1 + slashIdx where allLines[slashIdx+1] like\: "# *"
+mdLines: markDownStarts _ allLines
 row: 0; state: `NORMAL
 
 while[row<count mdLines
     ; s: trim line: mdLines[row]
-    ; $[ (s like "~~~q") and state<>`PRE ; [state:`CODE; -1@line]
-       ; (s like "~~~" )  and state<>`PRE ; [state:`NORMAL; -1@line]
-       ; (s like "```q") and state<>`PRE ; state:`MDCODE
-       ; (s like "```" )  and state<>`PRE ; state:`NORMAL
-       ; s like "<pre>" ; [state:`PRE; -1@line]
+    ; $[ (s like "~~~q") and state<>`PRE   ; [state:`CODE; -1@line]
+       ; (s like "~~~" ) and state=`CODE   ; [state:`NORMAL; -1@line]
+       ; (s like "```q") and state<>`PRE   ; state:`MDCODE /MDCODE do not out put the code into markdown
+       ; (s like "```" ) and state=`MDCODE ; state:`NORMAL
+       ; s like "<pre>" ; [state:`PRE   ; -1@line]
        ; s like "</pre>"; [state:`NORMAL; -1@line]
        ; state in `PRE`NORMAL; -1@line
        ; state = `CODE  ; [-1@line; 0 s]
@@ -37,6 +36,11 @@ while[row<count mdLines
        ]
      ; row+:1   
     ]   
+
+-1@"## Code loaded";
+-1@"~~~q";
+-1@/:(markDownStarts-2)#allLines;
+-1@"~~~";
 
 exit 0
 
