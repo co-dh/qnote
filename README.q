@@ -13,7 +13,7 @@ from it:
 
 * The file is a legitimate Q file
 * Put q code at the beginning
-* Markdown start with a line with single slash \, and # space on the next line.
+* Markdown start with a line with single slash \\, and # space on the next line.
 * Switch to k mode is not supported. Use 0N! to display like k when needed.
 * q code inside ~~~q block will be executed, and results will be put inside markdown's **code block**
 * q coed inside ```q blcok will be executed, and results will be put into **markdown** directly, so you
