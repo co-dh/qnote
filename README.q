@@ -5,7 +5,7 @@ body:{"\n", "\n" sv wrap each "|" sv/:string flip value flip x}
 separator:{"\n", wrap "|" sv enlist each count[cols t] # "-"}
 
 \
-# Poor man's notebook for Q programming language
+# A simple Notebook for Q programming language
 
 Given a Q file with a \ (on a single line without space) started comment block at the end of file, with next line
 started with # and a space for Markdown level head, and Markdown inside the comment, it will generated a Markdown file
