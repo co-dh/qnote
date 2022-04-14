@@ -70,7 +70,7 @@ $ ./qnote.q README.q > README.md
 ```
 For bigger example, please check https://github.com/co-dh/chess/blob/master/chess2.md and it's corresponding .q file
 
-## Library Code
+## Library Code[^1]
 ~~~q
 f:{x+1}
 wrap:{"|",x,"|"};
