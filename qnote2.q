@@ -15,7 +15,8 @@ markDownStarts: first 1 + slashIdx where allLines[slashIdx+1] like\: "# *"
 mdLines: markDownStarts _ allLines
 row: 0; state: `NORMAL
 
-Exec:{-1@"~~~q";-1@line;0 trim x;-1@"~~~"}
+Exec :{-1@"~~~q";-1@line;0 trim x;-1@"~~~"}
+ExecM:{-1@"~~~q";-1@line; -1@"~~~";0 trim x;}
 
 while[row<count mdLines
     ; s: trim line: mdLines[row]
@@ -25,7 +26,7 @@ while[row<count mdLines
        ; s like "</pre>"; [state:`NORMAL; -1@line]
        ; state in `PRE;   -1@line
        ; state in `NORMAL; $[line like"    *";Exec line;-1@line]
-       ; state = `MDCODE ; Exec s
+       ; state = `MDCODE ; ExecM s
        ]
      ; row+:1   
     ]   
